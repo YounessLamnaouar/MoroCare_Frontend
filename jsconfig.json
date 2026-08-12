@@ -1,0 +1,14 @@
+{
+    "include": ["src/**/*"],
+    "exclude": ["node_modules", "dist", "build"],
+    "references": [
+        
+    ],
+    "compilerOptions": {
+      "baseUrl": ".",
+      "paths": {
+        "@/*": ["./src/*"]
+      }
+    }
+  }
+  

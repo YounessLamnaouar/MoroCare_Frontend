@@ -54,7 +54,7 @@ import {
             throw new Error("Doctor information not found");
           }
   
-          const response = await axios.get(`http://localhost:8000/api/doctors/${user.doctor_id}`, {
+          const response = await axios.get(`https://morocarebackend-production.up.railway.app/api/doctors/${user.doctor_id}`, {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
             },
@@ -81,7 +81,7 @@ import {
       setUpdatingPassword(true);
       try {
         const response = await axios.put(
-          `http://localhost:8000/api/user/password`,
+          `https://morocarebackend-production.up.railway.app/api/user/password`,
           {
             current_password: data.currentPassword,
             password: data.newPassword,

@@ -32,7 +32,7 @@ export default function Login() {
   useEffect(() => {
     const getCsrfToken = async () => {
       try {
-        await fetch('http://localhost:8000/sanctum/csrf-cookie', {
+        await fetch('https://morocarebackend-production.up.railway.app/sanctum/csrf-cookie', {
           credentials: 'include',
         });
       } catch (error) {
@@ -52,7 +52,7 @@ export default function Login() {
         localStorage.setItem("token", response.token);
         if (response.user.role === 'doctor') {
           try {
-            const doctorResponse = await axios.get(`http://localhost:8000/api/doctors/search?email=${response.user.email}`);
+            const doctorResponse = await axios.get(`https://morocarebackend-production.up.railway.app/api/doctors/search?email=${response.user.email}`);
             if (doctorResponse.data && doctorResponse.data.length > 0) {
               const doctor = doctorResponse.data[0];
               localStorage.setItem("user", JSON.stringify({

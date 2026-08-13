@@ -70,15 +70,15 @@ function Calendar({
         ...classNames,
       }}
       components={{
-        IconLeft: ({ className, ...props }) => (
-          <ChevronLeft className={cn("size-4", className)} {...props} />
-        ),
-        IconRight: ({ className, ...props }) => (
-          <ChevronRight className={cn("size-4", className)} {...props} />
-        ),
-        CaptionLabel: ({ displayMonth }) => {
+        Chevron: ({ className, orientation, ...props }) => {
+          const Icon = orientation === "left" ? ChevronLeft : ChevronRight;
+
+          return <Icon className={cn("size-4", className)} {...props} />;
+        },
+        MonthCaption: ({ calendarMonth }) => {
+          const displayMonth = calendarMonth.date;
           const year = displayMonth.getFullYear();
-          const monthName = displayMonth.toLocaleString('default', { month: 'long' });
+          const monthName = displayMonth.toLocaleString("default", { month: "long" });
           
           return (
             <div className="flex items-center gap-2">

@@ -9,7 +9,7 @@ const api = axios.create({
     'Accept': 'application/json',
     'X-Requested-With': 'XMLHttpRequest'
   },
-  withCredentials: true,
+  withCredentials: false,
   timeout: 15000
 });
 
@@ -65,8 +65,6 @@ export const login = async (credentials) => {
 
 export const register = async (userData) => {
   try {
-    await api.get('/sanctum/csrf-cookie');
-    
     const response = await api.post('/api/register', userData);
     console.log(response)
     if (response.data.token) {

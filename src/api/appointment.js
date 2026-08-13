@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API = 'http://localhost:8000/api/appointments';
+const API = 'https://morocarebackend-production.up.railway.app/api/appointments';
 
 // Create axios instance with default config
 const axiosInstance = axios.create({

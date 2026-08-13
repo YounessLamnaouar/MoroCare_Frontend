@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'https://morocarebackend-production.up.railway.app/';
+const API_URL = import.meta.env.VITE_API_URL || 'https://morocarebackend-production.up.railway.app';
 
 const api = axios.create({
   baseURL: API_URL,
@@ -20,14 +20,6 @@ api.interceptors.request.use(
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
-    const csrfToken = document.cookie.split('; ')
-      .find(row => row.startsWith('XSRF-TOKEN='))
-      ?.split('=')[1];
-    
-    if (csrfToken) {
-      config.headers['X-XSRF-TOKEN'] = decodeURIComponent(csrfToken);
-    }
-    
     return config;
   },
   (error) => {

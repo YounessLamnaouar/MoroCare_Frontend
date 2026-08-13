@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API = 'https://morocarebackend-production.up.railway.app//api/teleconsultations';
+const API = 'https://morocarebackend-production.up.railway.app/api/teleconsultations';
 
 // Create axios instance with default config
 const axiosInstance = axios.create({

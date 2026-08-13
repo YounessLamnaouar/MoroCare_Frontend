@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API = 'https://morocarebackend-production.up.railway.app//api/doctors';
+const API = 'https://morocarebackend-production.up.railway.app/api/doctors';
 
 // Create axios instance with default config
 const axiosInstance = axios.create({

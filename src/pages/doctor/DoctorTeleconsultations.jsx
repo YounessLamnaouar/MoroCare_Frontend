@@ -8,9 +8,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Video, Loader2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { getTeleconsultations } from "@/api/teleconsultation";
+import { getTeleconsultations, updateTeleconsultationStatus } from "@/api/teleconsultation";
 import { toast } from "sonner";
-import axios from "axios";
 import { Link } from "react-router-dom";
 
 export default function DoctorTeleconsultations() {
@@ -62,9 +61,7 @@ export default function DoctorTeleconsultations() {
   const handleStatusUpdate = async (id, newStatus) => {
     try {
       setIsUpdating(true);
-      await axios.patch(`http://localhost:8000/api/teleconsultations/${id}/status`, {
-        status: newStatus
-      });
+      await updateTeleconsultationStatus(id, newStatus);
       
       setSessions((prev) =>
         prev.map((session) =>

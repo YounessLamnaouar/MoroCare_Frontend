@@ -12,7 +12,7 @@ import {
   import { zodResolver } from "@hookform/resolvers/zod";
   import { toast } from "sonner";
   import { useEffect, useState } from "react";
-  import axios from "axios";
+  import api from "@/api";
   
   const schema = z
     .object({
@@ -54,11 +54,7 @@ import {
             throw new Error("Doctor information not found");
           }
   
-          const response = await axios.get(`https://morocarebackend-production.up.railway.app/api/doctors/${user.doctor_id}`, {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          });
+          const response = await api.get(`/api/doctors/${user.doctor_id}`);
   
           setDoctor(response.data);
         } catch (err) {
@@ -80,18 +76,13 @@ import {
 
       setUpdatingPassword(true);
       try {
-        const response = await axios.put(
-          `https://morocarebackend-production.up.railway.app/api/user/password`,
+        const response = await api.put(
+          "/api/user/password",
           {
             current_password: data.currentPassword,
             password: data.newPassword,
             password_confirmation: data.confirmPassword,
           },
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          }
         );
   
         toast.success("Password updated successfully");

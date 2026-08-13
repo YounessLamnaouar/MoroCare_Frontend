@@ -1,19 +1,11 @@
-import axios from 'axios';
+import api from '@/api';
 
-const API = 'https://morocarebackend-production.up.railway.app/api/teleconsultations';
-
-// Create axios instance with default config
-const axiosInstance = axios.create({
-  headers: {
-    'Content-Type': 'application/json',
-    'Accept': 'application/json',
-  },
-});
+const API = '/api/teleconsultations';
 
 // Test function to check API connection
 export const testTeleconsultationAPI = async () => {
   try {
-    const response = await axiosInstance.get(API);
+    const response = await api.get(API);
     console.log('API connection test response:', response);
     return true;
   } catch (error) {
@@ -22,10 +14,10 @@ export const testTeleconsultationAPI = async () => {
   }
 };
 
-export const createTeleconsultation = (data) => axiosInstance.post(API, data);
-export const getTeleconsultations = () => axiosInstance.get(API);
-export const getTeleconsultation = (id) => axiosInstance.get(`${API}/${id}`);
-export const updateTeleconsultation = (id, data) => axiosInstance.put(`${API}/${id}`, data);
-export const deleteTeleconsultation = (id) => axiosInstance.delete(`${API}/${id}`);
+export const createTeleconsultation = (data) => api.post(API, data);
+export const getTeleconsultations = () => api.get(API);
+export const getTeleconsultation = (id) => api.get(`${API}/${id}`);
+export const updateTeleconsultation = (id, data) => api.put(`${API}/${id}`, data);
+export const deleteTeleconsultation = (id) => api.delete(`${API}/${id}`);
 export const updateTeleconsultationStatus = (id, status) => 
-  axiosInstance.patch(`${API}/${id}/status`, { status }); 
+  api.patch(`${API}/${id}/status`, { status });

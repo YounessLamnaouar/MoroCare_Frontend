@@ -15,8 +15,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { CheckCircle2, XCircle, Loader2, ChevronLeft, ChevronRight } from "lucide-react";
 import { useState, useEffect } from "react";
-import axios from "axios";
 import { toast } from "sonner";
+import { getAppointments, updateAppointmentStatus } from "@/api/appointment";
 
 export default function AppointmentsAdmin() {
     const [appointments, setAppointments] = useState([]);
@@ -27,7 +27,7 @@ export default function AppointmentsAdmin() {
 
     const fetchAppointments = async () => {
         try {
-            const response = await axios.get('http://localhost:8000/api/appointments');
+            const response = await getAppointments();
             console.log('Appointment time format:', response.data.map(appt => appt.time));
             setAppointments(response.data);
         } catch (error) {
@@ -58,9 +58,7 @@ export default function AppointmentsAdmin() {
     const updateStatus = async (id, newStatus) => {
         setUpdating(true);
         try {
-            await axios.patch(`http://localhost:8000/api/appointments/${id}/status`, {
-                status: newStatus
-            });
+            await updateAppointmentStatus(id, newStatus);
             
             setAppointments((prev) =>
                 prev.map((appt) =>

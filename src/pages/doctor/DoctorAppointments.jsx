@@ -8,9 +8,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { CheckCircle, XCircle, Loader2 } from "lucide-react";
-import { getAppointments } from "@/api/appointment";
+import { getAppointments, updateAppointmentStatus } from "@/api/appointment";
 import { toast } from "sonner";
-import axios from "axios";
 
 export default function DoctorAppointments() {
   const [appointments, setAppointments] = useState([]);
@@ -61,9 +60,7 @@ export default function DoctorAppointments() {
   const handleAction = async (id, newStatus) => {
     try {
       setIsUpdating(true);
-      await axios.patch(`http://localhost:8000/api/appointments/${id}/status`, {
-        status: newStatus
-      });
+      await updateAppointmentStatus(id, newStatus);
       
       setAppointments((prev) =>
         prev.map((app) =>

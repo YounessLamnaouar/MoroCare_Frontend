@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -9,7 +9,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Link, useNavigate } from "react-router-dom";
 import { login } from "@/api";
 import background from '@/assets/contact.webp';
-import axios from "axios";
 
 const formSchema = z.object({
   email: z.string().email({ message: "Invalid email address." }),
@@ -29,19 +28,6 @@ export default function Login() {
     resolver: zodResolver(formSchema),
   });
 
-  useEffect(() => {
-    const getCsrfToken = async () => {
-      try {
-        await fetch('https://morocarebackend-production.up.railway.app/sanctum/csrf-cookie', {
-          credentials: 'include',
-        });
-      } catch (error) {
-        console.error('Error getting CSRF token:', error);
-      }
-    };
-    getCsrfToken();
-  }, []);
-
   const onSubmit = async (data) => {
     try {
       setIsLoading(true);
@@ -50,22 +36,7 @@ export default function Login() {
       
       if (response.token) {
         localStorage.setItem("token", response.token);
-        if (response.user.role === 'doctor') {
-          try {
-            const doctorResponse = await axios.get(`https://morocarebackend-production.up.railway.app/api/doctors/search?email=${response.user.email}`);
-            if (doctorResponse.data && doctorResponse.data.length > 0) {
-              const doctor = doctorResponse.data[0];
-              localStorage.setItem("user", JSON.stringify({
-                ...response.user,
-                doctor_id: doctor.id
-              }));
-            }
-          } catch (error) {
-            console.error("Error fetching doctor details:", error);
-          }
-        } else {
-          localStorage.setItem("user", JSON.stringify(response.user));
-        }
+        localStorage.setItem("user", JSON.stringify(response.user));
         
         console.log("User data stored:", JSON.parse(localStorage.getItem("user")));
         

@@ -82,7 +82,7 @@ export const getUser = async () => {
     if (cachedUser) {
       return JSON.parse(cachedUser);
     }
-    const response = await api.get('/user');
+    const response = await api.get('/api/user');
     if (response.data) {
       localStorage.setItem('user', JSON.stringify(response.data));
     }
@@ -94,7 +94,7 @@ export const getUser = async () => {
 };
 export const updateProfile = async (profileData) => {
   try {
-    const response = await api.put('/user/profile', profileData);
+    const response = await api.put('/api/user/profile', profileData);
     return response.data;
   } catch (error) {
     console.error('Error updating profile:', error);
@@ -124,7 +124,7 @@ export const deleteAccount = async () => {
 
 export const getAppointments = async () => {
   try {
-    const response = await api.get('/appointments');
+    const response = await api.get('/api/appointments');
     return response.data;
   } catch (error) {
     console.error('Error fetching appointments:', error);
@@ -134,7 +134,7 @@ export const getAppointments = async () => {
 
 export const createAppointment = async (appointmentData) => {
   try {
-    const response = await api.post('/appointments', appointmentData);
+    const response = await api.post('/api/appointments', appointmentData);
     return response.data;
   } catch (error) {
     console.error('Error creating appointment:', error);
@@ -144,7 +144,7 @@ export const createAppointment = async (appointmentData) => {
 
 export const getTeleconsultations = async () => {
   try {
-    const response = await api.get('/teleconsultations');
+    const response = await api.get('/api/teleconsultations');
     return response.data;
   } catch (error) {
     console.error('Error fetching teleconsultations:', error);
@@ -174,7 +174,7 @@ export const createTeleconsultation = async (teleconsultationData) => {
 
 export const getDoctors = async () => {
   try {
-    const response = await api.get('/doctors');
+    const response = await api.get('/api/doctors');
     return response.data;
   } catch (error) {
     console.error('Error fetching doctors:', error);
@@ -184,7 +184,7 @@ export const getDoctors = async () => {
 
 export const getDoctor = async (id) => {
   try {
-    const response = await api.get(`/doctors/${id}`);
+    const response = await api.get(`/api/doctors/${id}`);
     return response.data;
   } catch (error) {
     console.error('Error fetching doctor:', error);

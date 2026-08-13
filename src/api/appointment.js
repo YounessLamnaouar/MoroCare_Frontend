@@ -1,19 +1,11 @@
-import axios from 'axios';
+import api from '@/api';
 
-const API = 'https://morocarebackend-production.up.railway.app/api/appointments';
-
-// Create axios instance with default config
-const axiosInstance = axios.create({
-  headers: {
-    'Content-Type': 'application/json',
-    'Accept': 'application/json',
-  },
-});
+const API = '/api/appointments';
 
 // Test function to check API connection
 export const testAppointmentAPI = async () => {
   try {
-    const response = await axiosInstance.get(API);
+    const response = await api.get(API);
     console.log('API connection test response:', response);
     return true;
   } catch (error) {
@@ -22,8 +14,9 @@ export const testAppointmentAPI = async () => {
   }
 };
 
-export const createAppointment = (data) => axiosInstance.post(API, data);
-export const getAppointments = () => axiosInstance.get(API);
-export const getAppointment = (id) => axiosInstance.get(`${API}/${id}`);
-export const updateAppointment = (id, data) => axiosInstance.put(`${API}/${id}`, data);
-export const deleteAppointment = (id) => axiosInstance.delete(`${API}/${id}`); 
+export const createAppointment = (data) => api.post(API, data);
+export const getAppointments = () => api.get(API);
+export const getAppointment = (id) => api.get(`${API}/${id}`);
+export const updateAppointment = (id, data) => api.put(`${API}/${id}`, data);
+export const deleteAppointment = (id) => api.delete(`${API}/${id}`);
+export const updateAppointmentStatus = (id, status) => api.patch(`${API}/${id}/status`, { status });

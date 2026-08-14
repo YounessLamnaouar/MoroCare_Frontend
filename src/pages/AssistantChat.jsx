@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Loader2 } from "lucide-react";
+import api from "@/api";
 
 export default function AssistantChat() {
   const [messages, setMessages] = useState([
@@ -24,21 +25,18 @@ export default function AssistantChat() {
     setLoading(true);
 
     try {
-      const response = await fetch("https://morocarebackend-production.up.railway.app/api/ask-ai", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({ question: userMessage.text }),
-      });
+      const { data } = await api.post("/api/ask-ai", { question: userMessage.text });
 
-      const data = await response.json();
+      if (!data.reply) {
+        throw new Error(data.message || "No reply received from the AI service.");
+      }
 
       const botMessage = { sender: "bot", text: data.reply };
       setMessages((prev) => [...prev, botMessage]);
     } catch (err) {
       setMessages((prev) => [
         ...prev,
-        { sender: "bot", text: "An error occurred. Please try again later." },
+        { sender: "bot", text: err.response?.data?.message || "An error occurred. Please try again later." },
       ]);
     } finally {
       setLoading(false);

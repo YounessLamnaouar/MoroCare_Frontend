@@ -1,5 +1,7 @@
 // Human-authored interface translations. Patient messages and names are never translated.
-const rows = `Home|Accueil|الرئيسية
+const rows = `Profile photo|Photo de profil|صورة الملف الشخصي
+JPG, PNG or WebP. Maximum 2 MB. Visible to other users.|JPG, PNG ou WebP. Maximum 2 Mo. Visible par les autres utilisateurs.|JPG أو PNG أو WebP. الحد الأقصى 2 ميغابايت. مرئية للمستخدمين الآخرين.
+Home|Accueil|الرئيسية
 Services|Services|الخدمات
 Directory|Annuaire|دليل الأطباء
 About us|À propos|من نحن

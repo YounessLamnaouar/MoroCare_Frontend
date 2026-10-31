@@ -1,3 +1,4 @@
+import { PhotoInput } from './avatar';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { CalendarDays, MessageCircle, ShieldCheck, MapPin, Heart, ArrowRight, Sparkles } from 'lucide-react';
@@ -92,7 +93,9 @@ export function AuthPage({
     setBusy(true);
     setError('');
     try {
-      const user = await authenticate(register ? '/register' : '/login', data);
+      const payload = register ? new FormData(e.target) : data;
+      if (register && !payload.get('photo')?.size) payload.delete('photo');
+      const user = await authenticate(register ? '/register' : '/login', payload);
       navigate(user.must_change_password ? '/change-password' : homeFor(user), {
         replace: true
       });
@@ -102,7 +105,7 @@ export function AuthPage({
       setBusy(false);
     }
   }
-  return <section className="mc-auth"><form className="mc-card mc-form" onSubmit={submit}><span className="mc-eyebrow">MoroCare</span><h1>{t(register ? 'Patient registration' : 'Welcome back')}</h1>{register && <p>{t('Doctor accounts are created by an administrator.')}</p>}{error && <ErrorNotice message={error} />} {register && <Field label={t('Full name')} name="name" required maxLength={255} autoComplete="name" />}<Field label={t('Email')} name="email" type="email" required autoComplete="email" />{register && <><Field label={t('Phone')} name="phone" type="tel" required minLength={10} maxLength={30} autoComplete="tel" /><Field label={t('Date of birth')} name="birthday" type="date" required max={new Date(Date.now() - 86400000).toISOString().slice(0, 10)} /></>}<Field label={t('Password')} name="password" type="password" required minLength={register ? 12 : 1} maxLength={128} autoComplete={register ? 'new-password' : 'current-password'} />{register && <><small>{t('Use at least 12 characters.')}</small><Field label={t('Confirm password')} name="password_confirmation" type="password" required autoComplete="new-password" /></>}<button className="mc-button" disabled={busy}>{t(busy ? 'Loading...' : register ? 'Create account' : 'Login')}</button><p>{t(register ? 'Already have an account?' : 'New to MoroCare?')} <Link to={register ? '/login' : '/register'}>{t(register ? 'Login' : 'Sign up')}</Link></p></form></section>;
+  return <section className="mc-auth"><form className="mc-card mc-form" onSubmit={submit}><span className="mc-eyebrow">MoroCare</span><h1>{t(register ? 'Patient registration' : 'Welcome back')}</h1>{register && <p>{t('Doctor accounts are created by an administrator.')}</p>}{error && <ErrorNotice message={error} />} {register && <Field label={t('Full name')} name="name" required maxLength={255} autoComplete="name" />}<Field label={t('Email')} name="email" type="email" required autoComplete="email" />{register && <><Field label={t('Phone')} name="phone" type="tel" required minLength={10} maxLength={30} autoComplete="tel" /><Field label={t('Date of birth')} name="birthday" type="date" required max={new Date(Date.now() - 86400000).toISOString().slice(0, 10)} /></>}<Field label={t('Password')} name="password" type="password" required minLength={register ? 12 : 1} maxLength={128} autoComplete={register ? 'new-password' : 'current-password'} />{register && <><PhotoInput t={t}/><small>{t('Use at least 12 characters.')}</small><Field label={t('Confirm password')} name="password_confirmation" type="password" required autoComplete="new-password" /></>}<button className="mc-button" disabled={busy}>{t(busy ? 'Loading...' : register ? 'Create account' : 'Login')}</button><p>{t(register ? 'Already have an account?' : 'New to MoroCare?')} <Link to={register ? '/login' : '/register'}>{t(register ? 'Login' : 'Sign up')}</Link></p></form></section>;
 }
 export function PasswordPage() {
   const {

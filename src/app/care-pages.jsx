@@ -1,3 +1,4 @@
+import { Avatar, PhotoInput } from './avatar';
 import { useEffect, useState, useCallback } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { CalendarDays, MessageCircle, Users, Plus, Search, ShieldCheck } from 'lucide-react';
@@ -46,7 +47,7 @@ export function Directory() {
     } = useData('/doctors');
   const [query, setQuery] = useState('');
   const filtered = (data || []).filter(d => [d.name, d.speciality, d.address].some(v => v?.toLocaleLowerCase().includes(query.toLocaleLowerCase())));
-  return <Page title={t('Find a doctor')} subtitle={t('Browse by name, specialty, or city.')}><div className="mc-search"><Search size={20} /><input aria-label={t('Search')} placeholder={t('Search by name, specialty, or city')} value={query} onChange={e => setQuery(e.target.value)} /></div>{error ? <ErrorNotice message={errorText(error, t)} retry={load} /> : !data ? <Loading /> : !filtered.length ? <Empty>{t('No doctors found.')}</Empty> : <div className="mc-grid three">{filtered.map(d => <article className="mc-card mc-doctor-card" key={d.id}><span className="mc-avatar">{d.name.slice(0, 1)}</span><h2>{d.name}</h2><p className="mc-teal">{t(d.speciality)}</p><p>{d.address || t('No contact details provided.')}</p><Link className="mc-button" to={`/services/appointment?doctor=${d.id}`}>{t('Book an appointment')}</Link><Link className="mc-text-link" to={`/services/teleconsultation?doctor=${d.id}`}>{t('Private consultation')}</Link></article>)}</div>}</Page>;
+  return <Page title={t('Find a doctor')} subtitle={t('Browse by name, specialty, or city.')}><div className="mc-search"><Search size={20} /><input aria-label={t('Search')} placeholder={t('Search by name, specialty, or city')} value={query} onChange={e => setQuery(e.target.value)} /></div>{error ? <ErrorNotice message={errorText(error, t)} retry={load} /> : !data ? <Loading /> : !filtered.length ? <Empty>{t('No doctors found.')}</Empty> : <div className="mc-grid three">{filtered.map(d => <article className="mc-card mc-doctor-card" key={d.id}><Avatar user={d}/><h2>{d.name}</h2><p className="mc-teal">{t(d.speciality)}</p><p>{d.address || t('No contact details provided.')}</p><Link className="mc-button" to={`/services/appointment?doctor=${d.id}`}>{t('Book an appointment')}</Link><Link className="mc-text-link" to={`/services/teleconsultation?doctor=${d.id}`}>{t('Private consultation')}</Link></article>)}</div>}</Page>;
 }
 export function BookingForm({
   consultation = false
@@ -84,7 +85,7 @@ export function BookingForm({
       setBusy(false);
     }
   }
-  return <Page title={t(consultation ? 'Request consultation' : 'Request appointment')} subtitle={t('Your doctor confirms your request before the consultation.')}>{error ? <ErrorNotice message={errorText(error, t)} retry={load} /> : !doctors ? <Loading /> : <form className="mc-card mc-form mc-narrow" onSubmit={submit}>{failure && <ErrorNotice message={failure} />}<Field label={t('Doctor')}><select name="doctor_id" defaultValue={params.get('doctor') || ''} required><option value="">{t('Select a doctor')}</option>{doctors.map(d => <option value={d.id} key={d.id}>{d.name} — {t(d.speciality)}</option>)}</select></Field><div className="mc-grid two"><Field label={t('Date')} name="date" type="date" min={new Intl.DateTimeFormat('en-CA', {
+  return <Page title={t(consultation ? 'Request consultation' : 'Request appointment')} subtitle={t('Your doctor confirms your request before the consultation.')}>{error ? <ErrorNotice message={errorText(error, t)} retry={load} /> : !doctors ? <Loading /> : <form className="mc-card mc-form mc-narrow" onSubmit={submit}>{failure && <ErrorNotice message={failure} />}<div className="mc-booking-doctors">{doctors.map(d=><div key={d.id}><Avatar user={d}/><span>{d.name}</span></div>)}</div><Field label={t('Doctor')}><select name="doctor_id" defaultValue={params.get('doctor') || ''} required><option value="">{t('Select a doctor')}</option>{doctors.map(d => <option value={d.id} key={d.id}>{d.name} — {t(d.speciality)}</option>)}</select></Field><div className="mc-grid two"><Field label={t('Date')} name="date" type="date" min={new Intl.DateTimeFormat('en-CA', {
           timeZone: 'Africa/Casablanca',
           year: 'numeric',
           month: '2-digit',
@@ -171,7 +172,7 @@ export function Profile() {
     try {
       const {
         data
-      } = await api.put('/user/profile', formValues(e));
+      } = await api.post('/user/profile', (() => { const body = new FormData(e.target); body.set('_method', 'PUT'); if (!body.get('photo')?.size) body.delete('photo'); return body; })());
       setUser(data);
       toast.success(t('Profile saved.'));
     } catch (e) {
@@ -189,7 +190,7 @@ export function Profile() {
     } catch (e) {
       toast.error(errorText(e, t));
     }
-  }}>{t('Logout')}</button>}><div className="mc-tabs" role="tablist">{[['personal', 'Personal details'], ...(user.role === 'user' ? [['appointments', 'Appointments'], ['consultations', 'Consultations']] : [])].map(([key, label]) => <button role="tab" aria-selected={tab === key} key={key} className={tab === key ? 'active' : ''} onClick={() => setTab(key)}>{t(label)}</button>)}</div>{tab === 'personal' ? <form className="mc-card mc-form mc-narrow" onSubmit={submit}><Field label={t('Full name')} name="name" defaultValue={user.name} required /><Field label={t('Email')} value={user.email} readOnly type="email" /><Field label={t('Phone')} name="phone" defaultValue={user.phone || ''} minLength={10} maxLength={30} type="tel" /><Field label={t('Date of birth')} name="birthday" type="date" defaultValue={user.birthday?.slice(0, 10) || ''} /><div className="mc-actions"><button className="mc-button" disabled={busy}>{t('Save')}</button><Link className="mc-button secondary" to="/change-password">{t('Change password')}</Link></div></form> : <BookingList key={tab} consultation={tab === 'consultations'} embedded />}</Page>;
+  }}>{t('Logout')}</button>}><div className="mc-tabs" role="tablist">{[['personal', 'Personal details'], ...(user.role === 'user' ? [['appointments', 'Appointments'], ['consultations', 'Consultations']] : [])].map(([key, label]) => <button role="tab" aria-selected={tab === key} key={key} className={tab === key ? 'active' : ''} onClick={() => setTab(key)}>{t(label)}</button>)}</div>{tab === 'personal' ? <form className="mc-card mc-form mc-narrow" onSubmit={submit}><Avatar user={user}/><PhotoInput t={t}/><Field label={t('Full name')} name="name" defaultValue={user.name} required /><Field label={t('Email')} value={user.email} readOnly type="email" /><Field label={t('Phone')} name="phone" defaultValue={user.phone || ''} minLength={10} maxLength={30} type="tel" /><Field label={t('Date of birth')} name="birthday" type="date" defaultValue={user.birthday?.slice(0, 10) || ''} /><div className="mc-actions"><button className="mc-button" disabled={busy}>{t('Save')}</button><Link className="mc-button secondary" to="/change-password">{t('Change password')}</Link></div></form> : <BookingList key={tab} consultation={tab === 'consultations'} embedded />}</Page>;
 }
 function generatedPassword() {
   const values = crypto.getRandomValues(new Uint8Array(20));

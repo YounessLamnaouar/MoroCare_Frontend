@@ -27,6 +27,7 @@ export function VideoCall({
     peer = useRef(null),
     timer = useRef(null),
     heartbeat = useRef(null),
+    disconnectTimer = useRef(null),
     cursor = useRef(0),
     candidates = useRef([]),
     active = useRef(false),
@@ -37,6 +38,7 @@ export function VideoCall({
     generation.current++;
     clearTimeout(timer.current);
     clearInterval(heartbeat.current);
+    clearTimeout(disconnectTimer.current);
     peer.current?.close();
     peer.current = null;
     stream.current?.getTracks().forEach(track => track.stop());
@@ -49,7 +51,7 @@ export function VideoCall({
   useEffect(() => {
     let live = true;
     const refresh = () => api.get(`${base}/video`).then(r => {
-      if (live) setConfig(r.data);
+      if (live) { setConfig(r.data); if (!r.data.enabled && active.current) stop(); }
     }).catch(() => {
       if (live) setConfig({
         enabled: false
@@ -107,7 +109,7 @@ export function VideoCall({
       if (localVideo.current) localVideo.current.srcObject = media;
       const pc = new RTCPeerConnection({
         iceServers: fresh.iceServers,
-        iceTransportPolicy: 'relay'
+        iceTransportPolicy: fresh.iceTransportPolicy === 'all' ? 'all' : 'relay'
       });
       peer.current = pc;
       media.getTracks().forEach(track => pc.addTrack(track, media));
@@ -115,14 +117,22 @@ export function VideoCall({
         if (remoteVideo.current) remoteVideo.current.srcObject = e.streams[0];
       };
       pc.onicecandidate = e => {
-        if (e.candidate && active.current) signal('candidate', e.candidate.toJSON()).catch(() => {
+        if (e.candidate && active.current && epoch === generation.current) signal('candidate', e.candidate.toJSON()).catch(() => {
+          if (epoch !== generation.current) return;
           setStatus('Video connection failed. You can continue in chat.');
           stop();
         });
       };
       pc.onconnectionstatechange = () => {
+        if (epoch !== generation.current) return;
+        clearTimeout(disconnectTimer.current);
         if (pc.connectionState === 'connected') setStatus('Connected');
-        if (['failed', 'disconnected'].includes(pc.connectionState)) {
+        if (pc.connectionState === 'disconnected') {
+          disconnectTimer.current = setTimeout(() => {
+            if (epoch === generation.current) { setStatus('Video connection failed. You can continue in chat.'); stop(); }
+          }, 15000);
+        }
+        if (pc.connectionState === 'failed') {
           setStatus('Video connection failed. You can continue in chat.');
           stop();
         }
@@ -166,7 +176,7 @@ export function VideoCall({
             if (pc.remoteDescription) while (candidates.current.length) await pc.addIceCandidate(candidates.current.shift());
           }
         } catch {
-          if (active.current) {
+          if (active.current && epoch === generation.current) {
             setStatus('Video connection failed. You can continue in chat.');
             stop();
             return;
@@ -175,14 +185,17 @@ export function VideoCall({
         if (active.current) timer.current = setTimeout(poll, 1500);
       }
       await signal('ready');
+      if (epoch !== generation.current) return;
       heartbeat.current = setInterval(() => {
         if (active.current) signal('ready').catch(() => {
+          if (epoch !== generation.current) return;
           setStatus('Video connection failed. You can continue in chat.');
           stop();
         });
       }, 10000);
       poll();
     } catch {
+      if (epoch !== generation.current) return;
       stop();
       setStatus('Camera or microphone unavailable. Check your browser permissions.');
     } finally {

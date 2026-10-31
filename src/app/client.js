@@ -29,3 +29,14 @@ export function errorText(error, t) {
   if (status >= 500) return t('Service temporarily unavailable.');
   return t('Request failed. Please try again.');
 }
+
+// Coalesce concurrent identical reads (including React StrictMode and dashboard widgets).
+// No completed response is cached: medical/account data is always refreshed.
+const pendingReads = new Map();
+export function readData(path) {
+  const key = `${sessionStorage.getItem('morocare-token') || 'guest'}:${path}`;
+  if (!pendingReads.has(key)) {
+    pendingReads.set(key, api.get(path).finally(() => pendingReads.delete(key)));
+  }
+  return pendingReads.get(key);
+}

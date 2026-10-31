@@ -2,6 +2,13 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { CalendarDays, MessageCircle, ShieldCheck, MapPin, Heart, ArrowRight, Sparkles } from 'lucide-react';
 import { toast } from 'sonner';
+import logo from '@/assets/logo-MoroCare-removebg-preview.png';
+import appointmentImage from '@/assets/services/appointement.png';
+import consultationImage from '@/assets/services/teleconsulation.png';
+import directoryImage from '@/assets/services/directory.png';
+import profileImage from '@/assets/services/patienProfile.png';
+import assistantImage from '@/assets/services/AiAssistant.png';
+const serviceImages = [appointmentImage, consultationImage, directoryImage, profileImage, assistantImage];
 import background from '@/assets/landing2.png';
 import { useLocale } from './locale';
 import { useAuth, homeFor } from './auth';
@@ -22,13 +29,13 @@ export function Services({
   const {
     t
   } = useLocale();
-  return <Page title={t(compact ? 'Care that fits your day' : 'Available services')} subtitle={t('Manage your care in one place.')}><div className="mc-service-grid">{serviceList.map(([title, description, url, Icon]) => <Link className="mc-service mc-card" to={url} key={url}><span className="mc-icon-tile"><Icon /></span><h2>{t(title)}</h2><p>{t(description)}</p><ArrowRight className="mc-card-arrow" size={20} /></Link>)}</div></Page>;
+  return <Page title={t(compact ? 'Care that fits your day' : 'Available services')} subtitle={t('Manage your care in one place.')}><div className="mc-service-grid">{serviceList.map(([title, description, url], index) => <Link className="mc-service mc-card mc-service-original" to={url} key={url}><img src={serviceImages[index]} alt="" loading="lazy" /><div className="mc-service-body"><h2>{t(title)}</h2><p>{t(description)}</p><span className="mc-button">{t("Explore services")} <ArrowRight size={16}/></span></div></Link>)}</div></Page>;
 }
 export function About() {
   const {
     t
   } = useLocale();
-  return <Page title={t('About MoroCare')} subtitle={t('Closer to care, wherever you are.')}><div className="mc-about-intro"><div><span className="mc-eyebrow">MoroCare · Morocco</span><h2>{t('A clear path to care')}</h2><p>{t('MoroCare connects patients and doctors in Morocco through appointment requests and private online consultations.')}</p><Link className="mc-button" to="/services/directory">{t('Find a doctor')}</Link></div><div className="mc-about-mark" aria-hidden="true"><Heart size={100} strokeWidth={1} /><span>MoroCare</span></div></div><div className="mc-grid three">{[['Choose your doctor', 'Browse by name, specialty, or city.'], ['Request a time', 'Your doctor confirms your request before the consultation.'], ['Stay connected', 'Return to your account to follow appointments and private messages.']].map(([title, body], i) => <article className="mc-card" key={title}><span className="mc-step">0{i + 1}</span><h2>{t(title)}</h2><p>{t(body)}</p></article>)}</div><div className="mc-grid two mc-section-gap">{[['Privacy by design', 'Only you and your assigned doctor can access your consultation messages.', ShieldCheck], ['Honest information', 'We show available services without promising diagnoses or emergency care.', Heart]].map(([title, body, Icon]) => <article className="mc-card" key={title}><Icon className="mc-teal" /><h2>{t(title)}</h2><p>{t(body)}</p></article>)}</div><Emergency /></Page>;
+  return <Page title={t('About MoroCare')} subtitle={t('Closer to care, wherever you are.')}><div className="mc-about-intro"><div><span className="mc-eyebrow">MoroCare · Morocco</span><h2>{t('A clear path to care')}</h2><p>{t('MoroCare connects patients and doctors in Morocco through appointment requests and private online consultations.')}</p><Link className="mc-button" to="/services/directory">{t('Find a doctor')}</Link></div><div className="mc-about-mark" aria-hidden="true"><img src={logo} alt="" className="mc-about-logo" /></div></div><div className="mc-grid three">{[['Choose your doctor', 'Browse by name, specialty, or city.'], ['Request a time', 'Your doctor confirms your request before the consultation.'], ['Stay connected', 'Return to your account to follow appointments and private messages.']].map(([title, body], i) => <article className="mc-card" key={title}><span className="mc-step">0{i + 1}</span><h2>{t(title)}</h2><p>{t(body)}</p></article>)}</div><div className="mc-grid two mc-section-gap">{[['Privacy by design', 'Only you and your assigned doctor can access your consultation messages.', ShieldCheck], ['Honest information', 'We show available services without promising diagnoses or emergency care.', Heart]].map(([title, body, Icon]) => <article className="mc-card" key={title}><Icon className="mc-teal" /><h2>{t(title)}</h2><p>{t(body)}</p></article>)}</div><Emergency /></Page>;
 }
 export function Emergency() {
   const {

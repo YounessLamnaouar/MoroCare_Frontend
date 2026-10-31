@@ -2,7 +2,7 @@ import { useEffect, useState, useCallback } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { CalendarDays, MessageCircle, Users, Plus, Search, ShieldCheck } from 'lucide-react';
 import { toast } from 'sonner';
-import { api, errorText } from './client';
+import { api, errorText, readData } from './client';
 import { useLocale } from './locale';
 import { useAuth } from './auth';
 import { Page, Field, Loading, Empty, ErrorNotice, Status, formValues } from './ui';
@@ -12,14 +12,14 @@ export function useData(path) {
   const load = useCallback(async () => {
     setError(null);
     try {
-      setData((await api.get(path)).data);
+      setData((await readData(path)).data);
     } catch (e) {
       setError(e);
     }
   }, [path]);
   useEffect(() => {
     let active = true;
-    api.get(path).then(r => {
+    readData(path).then(r => {
       if (active) setData(r.data);
     }).catch(e => {
       if (active) setError(e);

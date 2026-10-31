@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { Video, VideoOff, Mic, MicOff, PhoneOff, Send } from 'lucide-react';
 import { api, errorText } from './client';
 import { useAuth } from './auth';
@@ -322,27 +322,30 @@ export function Assistant() {
     e.preventDefault();
     setBusy(true);
     setError('');
+    if (!accepted || !question.trim()) { setBusy(false); return; }
     const text = question;
     try {
       const {
         data
       } = await api.post('/ask-ai', {
         question: text,
+        history: messages.slice(-6).flatMap(m=>[{role:'user',content:m.question},{role:'assistant',content:m.answer}]),
         language,
         consent: true
       }, {
-        timeout: 35000
+        timeout: 185000
       });
       setMessages(old => [...old, {
         question: text,
-        answer: data.reply
+        answer: data.reply,
+        doctors: data.doctors || []
       }]);
       setQuestion('');
     } catch (e) {
-      setError(errorText(e, t));
+      setError(e.response?.data?.code === 'assistant_offline' ? t('Start Ollama and download the model to use the assistant.') : errorText(e, t));
     } finally {
       setBusy(false);
     }
   }
-  return <Page title={t('Health information assistant')} subtitle={t('Health information, not a diagnosis.')}><Emergency /><div className="mc-card mc-form mc-narrow"><p>{t('Do not share identifying or sensitive details. Your question is sent to our external AI provider.')}</p><label className="mc-checkbox"><input type="checkbox" checked={accepted} onChange={e => setAccepted(e.target.checked)} />{t('I understand and agree to send my question.')}</label>{messages.map((m, i) => <div key={i} className="mc-answer"><strong>{m.question}</strong><p className="mc-message-body">{m.answer}</p></div>)}{error && <ErrorNotice message={error} />}<form className="mc-form" onSubmit={ask}><Field label={t('Ask a general health question')}><textarea value={question} onChange={e => setQuestion(e.target.value)} maxLength={2000} required rows={4} /></Field><button className="mc-button" disabled={!accepted || busy || !question.trim()}>{t(busy ? 'Thinking...' : 'Ask')}</button></form></div></Page>;
+  return <Page title={t('Health information assistant')} subtitle={t('Health information, not a diagnosis.')}><Emergency /><div className="mc-card mc-form mc-narrow"><p>{t('This chat runs locally on this computer. Avoid sharing identifying details. AI can make mistakes.')}</p><label className="mc-checkbox"><input type="checkbox" checked={accepted} onChange={e => setAccepted(e.target.checked)} />{t('I understand this assistant provides information, not a diagnosis.')}</label><div className="mc-actions"><Link className="mc-button secondary" to="/services/directory">{t('Find a doctor')}</Link><button type="button" className="mc-button secondary" disabled={busy} onClick={()=>{setMessages([]);setQuestion('');setError('');}}>{t('New conversation')}</button></div>{messages.map((m, i) => <div key={i} className="mc-answer"><strong>{m.question}</strong><p className="mc-message-body">{m.answer}</p>{m.doctors?.length > 0 && <details><summary>{t("Find a doctor")}</summary><div className="mc-actions">{m.doctors.map(d=><Link key={d.id} className="mc-button secondary" to={`/services/appointment?doctor=${d.id}`}>{d.name} · {d.speciality}</Link>)}</div></details>}</div>)}{error && <ErrorNotice message={error} />}<form className="mc-form" onSubmit={ask}><Field label={t('Ask a general health question')}><textarea value={question} onChange={e => setQuestion(e.target.value)} maxLength={2000} required rows={4} /></Field><button className="mc-button" disabled={!accepted || busy || !question.trim()}>{t(busy ? 'Thinking...' : 'Ask')}</button></form></div></Page>;
 }

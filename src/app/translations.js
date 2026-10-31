@@ -1,5 +1,9 @@
 // Human-authored interface translations. Patient messages and names are never translated.
-const rows = `Profile photo|Photo de profil|صورة الملف الشخصي
+const rows = `This chat runs locally on this computer. Avoid sharing identifying details. AI can make mistakes.|Cette conversation fonctionne localement sur cet ordinateur. Évitez les données identifiantes. L’IA peut se tromper.|تعمل هذه المحادثة محلياً على هذا الحاسوب. تجنب معلومات الهوية. قد يخطئ الذكاء الاصطناعي.
+I understand this assistant provides information, not a diagnosis.|Je comprends que cet assistant informe sans poser de diagnostic.|أفهم أن هذا المساعد يقدم معلومات وليس تشخيصاً.
+New conversation|Nouvelle conversation|محادثة جديدة
+Start Ollama and download the model to use the assistant.|Démarrez Ollama et téléchargez le modèle pour utiliser l’assistant.|شغّل Ollama ونزّل النموذج لاستخدام المساعد.
+Profile photo|Photo de profil|صورة الملف الشخصي
 JPG, PNG or WebP. Maximum 2 MB. Visible to other users.|JPG, PNG ou WebP. Maximum 2 Mo. Visible par les autres utilisateurs.|JPG أو PNG أو WebP. الحد الأقصى 2 ميغابايت. مرئية للمستخدمين الآخرين.
 Home|Accueil|الرئيسية
 Services|Services|الخدمات

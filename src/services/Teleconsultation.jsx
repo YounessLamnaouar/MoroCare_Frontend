@@ -41,7 +41,6 @@ export default function Teleconsultation() {
     handleSubmit,
     setValue,
     watch,
-    control,
     formState: { errors },
   } = useForm({
     resolver: zodResolver(teleconsultationSchema),
@@ -205,7 +204,7 @@ export default function Teleconsultation() {
                       setCalendarDate(date);
                       setValue("date", date);
                     }}
-                    disabled={(date) => date < new Date()}
+                    disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
                   />
                 </PopoverContent>
               </Popover>

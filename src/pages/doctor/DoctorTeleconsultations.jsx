@@ -101,7 +101,7 @@ export default function DoctorTeleconsultations() {
             </div>
           ) : (
             sessions.map((session) => {
-              const roomId = `morocare-session-${session.id}`;
+
               return (
                 <div
                   key={session.id}
@@ -156,7 +156,7 @@ export default function DoctorTeleconsultations() {
                     )}
 
                     {session.status === "Confirmed" && (
-                        <Link to={`/services/teleconsultation/room?room=${roomId}`} rel="noopener noreferrer" >
+                        <Link to={`/services/teleconsultation/room?session=${session.id}`} rel="noopener noreferrer" >
                         <Button className="bg-[#155B5F] hover:bg-[#0F4A4D] text-white">
                           <Video className="mr-2" size={16} />
                           Join Call

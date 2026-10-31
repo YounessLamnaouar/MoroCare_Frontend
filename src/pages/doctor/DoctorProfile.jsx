@@ -13,7 +13,7 @@ import {
   import { toast } from "sonner";
   import { useEffect, useState } from "react";
   import api from "@/api";
-  
+
   const schema = z
     .object({
       currentPassword: z.string().min(1, "Current password is required"),
@@ -30,13 +30,13 @@ import {
       message: "Passwords do not match",
       path: ["confirmPassword"],
     });
-  
+
   export default function DoctorProfile() {
     const [doctor, setDoctor] = useState(null);
     const [loading, setLoading] = useState(true);
     const [updatingPassword, setUpdatingPassword] = useState(false);
     const [error, setError] = useState(null);
-  
+
     const {
       register,
       handleSubmit,
@@ -45,7 +45,7 @@ import {
     } = useForm({
       resolver: zodResolver(schema),
     });
-  
+
     useEffect(() => {
       const fetchDoctorProfile = async () => {
         try {
@@ -53,9 +53,9 @@ import {
           if (!user || !user.doctor_id) {
             throw new Error("Doctor information not found");
           }
-  
+
           const response = await api.get(`/api/doctors/${user.doctor_id}`);
-  
+
           setDoctor(response.data);
         } catch (err) {
           console.error("Error fetching doctor profile:", err);
@@ -65,10 +65,10 @@ import {
           setLoading(false);
         }
       };
-  
+
       fetchDoctorProfile();
     }, []);
-  
+
     const onSubmit = async (data) => {
       if (!window.confirm("Are you sure you want to change your password?")) {
         return;
@@ -76,7 +76,7 @@ import {
 
       setUpdatingPassword(true);
       try {
-        const response = await api.put(
+        await api.put(
           "/api/user/password",
           {
             current_password: data.currentPassword,
@@ -84,7 +84,7 @@ import {
             password_confirmation: data.confirmPassword,
           },
         );
-  
+
         toast.success("Password updated successfully");
         reset();
       } catch (err) {
@@ -95,7 +95,7 @@ import {
         setUpdatingPassword(false);
       }
     };
-  
+
     if (loading) {
       return (
         <div className="min-h-screen flex items-center justify-center">
@@ -103,7 +103,7 @@ import {
         </div>
       );
     }
-  
+
     if (error) {
       return (
         <div className="min-h-screen flex items-center justify-center">
@@ -120,7 +120,7 @@ import {
         </div>
       );
     }
-  
+
     if (!doctor) {
       return (
         <div className="min-h-screen flex items-center justify-center">
@@ -130,11 +130,11 @@ import {
         </div>
       );
     }
-  
+
     return (
       <section className="space-y-6">
         <h1 className="text-2xl font-bold text-[#155B5F]">My Profile</h1>
-  
+
         <Card className="shadow-sm">
           <CardHeader>
             <CardTitle className="text-[#155B5F]">Profile Information</CardTitle>
@@ -158,7 +158,7 @@ import {
             </div>
           </CardContent>
         </Card>
-  
+
         <Card className="shadow-sm">
           <CardHeader>
             <CardTitle className="text-[#155B5F]">Change Password</CardTitle>
@@ -167,10 +167,10 @@ import {
             <form onSubmit={handleSubmit(onSubmit)} className="grid gap-4">
               <div>
                 <Label htmlFor="currentPassword">Current Password</Label>
-                <Input 
+                <Input
                   id="currentPassword"
-                  type="password" 
-                  {...register("currentPassword")} 
+                  type="password"
+                  {...register("currentPassword")}
                   disabled={updatingPassword}
                   className={errors.currentPassword ? "border-red-500" : ""}
                 />
@@ -178,13 +178,13 @@ import {
                   <p className="text-red-600 text-sm mt-1">{errors.currentPassword.message}</p>
                 )}
               </div>
-  
+
               <div>
                 <Label htmlFor="newPassword">New Password</Label>
-                <Input 
+                <Input
                   id="newPassword"
-                  type="password" 
-                  {...register("newPassword")} 
+                  type="password"
+                  {...register("newPassword")}
                   disabled={updatingPassword}
                   className={errors.newPassword ? "border-red-500" : ""}
                 />
@@ -192,13 +192,13 @@ import {
                   <p className="text-red-600 text-sm mt-1">{errors.newPassword.message}</p>
                 )}
               </div>
-  
+
               <div>
                 <Label htmlFor="confirmPassword">Confirm New Password</Label>
-                <Input 
+                <Input
                   id="confirmPassword"
-                  type="password" 
-                  {...register("confirmPassword")} 
+                  type="password"
+                  {...register("confirmPassword")}
                   disabled={updatingPassword}
                   className={errors.confirmPassword ? "border-red-500" : ""}
                 />
@@ -206,9 +206,9 @@ import {
                   <p className="text-red-600 text-sm mt-1">{errors.confirmPassword.message}</p>
                 )}
               </div>
-  
-              <Button 
-                type="submit" 
+
+              <Button
+                type="submit"
                 className="bg-[#155B5F] text-white hover:bg-[#0F4A4D]"
                 disabled={updatingPassword}
               >
@@ -220,4 +220,4 @@ import {
       </section>
     );
   }
-  
+

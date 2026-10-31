@@ -10,7 +10,7 @@ export default function DoctorDashboard() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [appointments, setAppointments] = useState([]);
-    const [teleconsultations, setTeleconsultations] = useState([]);
+    const [, setTeleconsultations] = useState([]);
     const [todayAppointments, setTodayAppointments] = useState(0);
     const [checkedInPatients, setCheckedInPatients] = useState(0);
     const [upcomingTeleconsultations, setUpcomingTeleconsultations] = useState(0);
@@ -51,10 +51,10 @@ export default function DoctorDashboard() {
             new Date(app.date).toLocaleDateString() === today
           );
           setTodayAppointments(todayApps.length);
-          setCheckedInPatients(todayApps.filter(app => app.status === 'Checked In').length);
+          setCheckedInPatients(todayApps.filter(app => app.status === 'Confirmed').length);
 
           const upcomingTcs = doctorTeleconsultations.filter(tc => 
-            new Date(tc.date) >= new Date() && tc.status === 'Confirmed'
+            new Date(`${tc.date}T${tc.time}`) >= new Date() && tc.status === 'Confirmed'
           );
           setUpcomingTeleconsultations(upcomingTcs.length);
 
@@ -69,7 +69,7 @@ export default function DoctorDashboard() {
           const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
           const weeklyPatients = new Set(
             doctorAppointments
-              .filter(app => new Date(app.date) >= oneWeekAgo)
+              .filter(app => new Date(`${app.date}T${app.time}`) >= oneWeekAgo && new Date(`${app.date}T${app.time}`) <= now && app.status !== "Canceled")
               .map(app => app.patient_id)
           );
           setWeeklyPatients(weeklyPatients.size);
@@ -139,7 +139,7 @@ export default function DoctorDashboard() {
           </CardHeader>
           <CardContent>
             <p className="text-4xl font-bold text-[#155B5F]">{todayAppointments}</p>
-            <p className="text-sm text-muted-foreground">{checkedInPatients} patients checked in</p>
+            <p className="text-sm text-muted-foreground">{checkedInPatients} confirmed appointments</p>
           </CardContent>
         </Card>
 

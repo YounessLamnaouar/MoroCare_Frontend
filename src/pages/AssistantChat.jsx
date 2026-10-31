@@ -25,7 +25,7 @@ export default function AssistantChat() {
     setLoading(true);
 
     try {
-      const { data } = await api.post("/api/ask-ai", { question: userMessage.text });
+      const { data } = await api.post("/api/ask-ai", { question: userMessage.text }, { timeout: 35000 });
 
       if (!data.reply) {
         throw new Error(data.message || "No reply received from the AI service.");

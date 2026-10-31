@@ -46,7 +46,7 @@ export default function PatientProfile() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [birthdate, setBirthdate] = useState(null);
+
   const [updatingPassword, setUpdatingPassword] = useState(false);
   const [deletingAccount, setDeletingAccount] = useState(false);
   const [teleconsultations, setTeleconsultations] = useState([]);
@@ -68,9 +68,7 @@ export default function PatientProfile() {
         setError(null);
         const userData = await getUser();
         setUser(userData);
-        if (userData.birthdate) {
-          setBirthdate(new Date(userData.birthdate));
-        }
+
       } catch (err) {
         console.error("Error fetching user data:", err);
         setError("Failed to load profile data. Please try again.");
@@ -137,7 +135,7 @@ export default function PatientProfile() {
     );
   }
 
-  const roomId = `morocare-user-${user.id}`;
+
 
   const onSubmit = async (data) => {
     if (!window.confirm("Are you sure you want to change your password?")) {
@@ -243,12 +241,12 @@ export default function PatientProfile() {
 
               <div>
                 <Label htmlFor="allergies" className="text-[#155B5F]">Allergies</Label>
-                <Input id="allergies" value={user.allergies || "None"} readOnly className="mt-1 bg-[#F7FAFA]" />
+                <Input id="allergies" value={user.allergies || "Not provided"} readOnly className="mt-1 bg-[#F7FAFA]" />
               </div>
 
               <div>
                 <Label htmlFor="chronic" className="text-[#155B5F]">Chronic Conditions</Label>
-                <Input id="chronic" value={user.chronic_conditions || "None"} readOnly className="mt-1 bg-[#F7FAFA]" />
+                <Input id="chronic" value={user.chronic_conditions || "Not provided"} readOnly className="mt-1 bg-[#F7FAFA]" />
               </div>
             </CardContent>
           </Card>
@@ -339,7 +337,7 @@ export default function PatientProfile() {
                       <p><strong>Doctor:</strong> {teleconsultation.doctor?.name || "N/A"}</p>
                       <p><strong>Status:</strong> {teleconsultation.status}</p>
                       {teleconsultation.status === "Confirmed" && (
-                          <Link to={`/services/teleconsultation/room?room=morocare-user-${user.id}`} rel="noopener noreferrer" >
+                          <Link to={`/services/teleconsultation/room?session=${teleconsultation.id}`} rel="noopener noreferrer" >
                           <Button className="bg-[#155B5F] hover:bg-[#0F4A4D] text-white mt-4">
                             <Video className="mr-2" size={16} />
                             Join Call

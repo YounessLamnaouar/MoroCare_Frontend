@@ -15,7 +15,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { CheckCircle2, XCircle, Loader2, ChevronLeft, ChevronRight } from "lucide-react";
 import { useState, useEffect } from "react";
-import axios from "axios";
 import { toast } from "sonner";
 import { getTeleconsultations, updateTeleconsultationStatus } from "@/api/teleconsultation";
 

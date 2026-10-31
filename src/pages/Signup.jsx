@@ -1,3 +1,4 @@
+import { format } from "date-fns";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -6,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { register } from "@/api";
 import { DatePicker } from "@/components/ui/date-picker";
 import background from '@/assets/contact.webp';
@@ -15,9 +16,9 @@ const formSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
   email: z.string().email({ message: "Invalid email address." }),
   phone: z.string().min(10, { message: "Phone number must be at least 10 digits." }),
-  password: z.string().min(6, { message: "Password must be at least 6 characters." }),
+  password: z.string().min(8, { message: "Password must be at least 8 characters." }),
   password_confirmation: z.string(),
-  birthday: z.date().optional(),
+  birthday: z.date({ required_error: "Date of birth is required." }).refine((date) => date < new Date(new Date().setHours(0, 0, 0, 0)), "Date of birth must be in the past."),
 }).refine((data) => data.password === data.password_confirmation, {
   message: "Passwords don't match",
   path: ["password_confirmation"],
@@ -44,7 +45,7 @@ export default function Signup() {
       setError("");
       const formData = {
         ...data,
-        birthday: birthday ? birthday.toISOString().split('T')[0] : undefined,
+        birthday: birthday ? format(birthday, 'yyyy-MM-dd') : undefined,
       };
       const response = await register(formData);
       
@@ -55,7 +56,7 @@ export default function Signup() {
       }
     } catch (err) {
       console.error("Registration failed:", err);
-      setError(err.response?.data?.message || "Registration failed. Please try again.");
+      setError(Object.values(err.response?.data?.errors || {}).flat().join(" ") || err.response?.data?.message || "Registration failed. Please try again.");
     } finally {
       setIsLoading(false);
     }

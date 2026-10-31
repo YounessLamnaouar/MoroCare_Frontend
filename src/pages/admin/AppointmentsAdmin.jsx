@@ -59,13 +59,13 @@ export default function AppointmentsAdmin() {
         setUpdating(true);
         try {
             await updateAppointmentStatus(id, newStatus);
-            
+
             setAppointments((prev) =>
                 prev.map((appt) =>
                     appt.id === id ? { ...appt, status: newStatus } : appt
                 )
             );
-            
+
             toast.success(`Appointment ${newStatus.toLowerCase()} successfully`);
         } catch (error) {
             console.error('Error updating appointment:', error);
@@ -229,4 +229,4 @@ export default function AppointmentsAdmin() {
         </section>
     );
 }
-  
+

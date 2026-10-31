@@ -14,6 +14,8 @@ import {
 export default function Navbar({ userAuth }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const location = useLocation();
+  const profilePath = userAuth?.role === 'admin' ? '/admin' : userAuth?.role === 'doctor' ? '/doctor/profile' : '/services/profile';
+  const appointmentsPath = userAuth?.role === 'admin' ? '/admin/appointments' : userAuth?.role === 'doctor' ? '/doctor/appointments' : '/services/appointment';
 
   const handleLogout = async () => {
     await logout();
@@ -41,8 +43,8 @@ export default function Navbar({ userAuth }) {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuItem asChild><Link className='text-teal-800' to="/services/profile">Profile</Link></DropdownMenuItem>
-                <DropdownMenuItem asChild><Link className='text-teal-800' to="/services/appointment">Appointments</Link></DropdownMenuItem>
+                <DropdownMenuItem asChild><Link className='text-teal-800' to={profilePath}>Profile</Link></DropdownMenuItem>
+                <DropdownMenuItem asChild><Link className='text-teal-800' to={appointmentsPath}>Appointments</Link></DropdownMenuItem>
                 <DropdownMenuItem onClick={handleLogout} className='text-teal-800 cursor-pointer'>Logout</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -79,7 +81,7 @@ export default function Navbar({ userAuth }) {
         <div className="md:hidden bg-white border-t border-gray-200 px-4 py-3 space-y-3 shadow-lg">
           <Link to="/" className="block text-teal-800 hover:text-teal-950" onClick={() => setMobileMenuOpen(false)}>Home</Link>
           <Link to="/services" className="block text-teal-800 hover:text-teal-950" onClick={() => setMobileMenuOpen(false)}>Services</Link>
-          <Link to="/services/directory" className="block text-teal-800 hover:text-teal-950" onClick={() => setMobileMenuOpen(false)}>Directory</Link>
+          <Link to={appointmentsPath} className="block text-teal-800 hover:text-teal-950" onClick={() => setMobileMenuOpen(false)}>Directory</Link>
           <Link to="/about" className="block text-teal-800 hover:text-teal-950" onClick={() => setMobileMenuOpen(false)}>About Us</Link>
           <Link to="/contact" className="block text-teal-800 hover:text-teal-950" onClick={() => setMobileMenuOpen(false)}>Contact</Link>
 
@@ -90,7 +92,7 @@ export default function Navbar({ userAuth }) {
             </>
           ) : (
             <>
-              <Link to="/services/profile" className="block text-teal-800 hover:text-teal-950" onClick={() => setMobileMenuOpen(false)}>Profile</Link>
+              <Link to={profilePath} className="block text-teal-800 hover:text-teal-950" onClick={() => setMobileMenuOpen(false)}>Profile</Link>
               <Link to="/services/directory" className="block text-teal-800 hover:text-teal-950" onClick={() => setMobileMenuOpen(false)}>Appointments</Link>
               <button onClick={handleLogout} className="block w-full text-left text-teal-800 hover:text-teal-950">Logout</button>
             </>

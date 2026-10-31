@@ -1,4 +1,4 @@
-import { useSprings, animated } from '@react-spring/web';
+import { animated as Animated, easings, useSprings } from '@react-spring/web';
 import { useEffect, useRef, useState } from 'react';
 
 const SplitText = ({
@@ -50,7 +50,7 @@ const SplitText = ({
         }
         : animationFrom,
       delay: i * delay,
-      config: { easing },
+      config: { easing: typeof easing === 'function' ? easing : (easings[easing] ?? easings.easeOutCubic) },
     }))
   );
 
@@ -68,7 +68,7 @@ const SplitText = ({
               .reduce((acc, w) => acc + w.length, 0) + letterIndex;
 
             return (
-              <animated.span
+              <Animated.span
                 key={index}
                 style={{
                   ...springs[index],
@@ -77,7 +77,7 @@ const SplitText = ({
                 }}
               >
                 {letter}
-              </animated.span>
+              </Animated.span>
             );
           })}
           <span style={{ display: 'inline-block', width: '0.3em' }}>&nbsp;</span>

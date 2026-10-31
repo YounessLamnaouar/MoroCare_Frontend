@@ -69,7 +69,7 @@ export default function Appointment() {
             console.log("Setting doctor to:", selectedDoctor.id);
             
             setValue("speciality", selectedDoctor.speciality, { shouldValidate: true });
-            setValue("doctor", selectedDoctor.id, { shouldValidate: true });
+            setValue("doctor", String(selectedDoctor.id), { shouldValidate: true });
             
             const filtered = response.data.filter(
               doctor => doctor.speciality === selectedDoctor.speciality
@@ -236,7 +236,7 @@ export default function Appointment() {
                       setCalendarDate(date);
                       setValue("date", date);
                     }}
-                    disabled={(date) => date < new Date()}
+                    disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
                   />
                 </PopoverContent>
               </Popover>

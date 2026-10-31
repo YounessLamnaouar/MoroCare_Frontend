@@ -4,8 +4,26 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import contactImage from "@/assets/contact.webp"; 
+import { useState } from "react";
+import api from "@/api";
+import { toast } from "sonner";
 
 export default function Contact() {
+  const [sending, setSending] = useState(false);
+  const submit = async (event) => {
+    event.preventDefault();
+    const form = event.currentTarget;
+    setSending(true);
+    try {
+      const { data } = await api.post('/api/contact', Object.fromEntries(new FormData(form)));
+      toast.success(data.message);
+      form.reset();
+    } catch (error) {
+      toast.error(Object.values(error.response?.data?.errors || {}).flat().join(' ') || 'Unable to send your message. Please try again.');
+    } finally {
+      setSending(false);
+    }
+  };
   return (
     <section className="max-w-7xl mx-auto bg-[#96C1B9] px-4 py-10">
       <div className="text-center mb-12">
@@ -26,11 +44,12 @@ export default function Contact() {
         </div>
         <Card className="bg-white shadow-lg border-2 border-[#96C1B9]">
           <CardContent className="p-8">
-            <form className="space-y-6">
+            <form className="space-y-6" onSubmit={submit}>
               <div>
                 <Label htmlFor="name" className="text-[#155B5F]">Name</Label>
                 <Input
                   id="name"
+                  name="name" required maxLength={255}
                   placeholder="Enter your name"
                   className="bg-[#F7FAFA] focus:ring-[#155B5F]"
                 />
@@ -40,6 +59,7 @@ export default function Contact() {
                 <Label htmlFor="email" className="text-[#155B5F]">Email</Label>
                 <Input
                   id="email"
+                  name="email" required maxLength={255}
                   type="email"
                   placeholder="Enter your email"
                   className="bg-[#F7FAFA] focus:ring-[#155B5F]"
@@ -50,14 +70,15 @@ export default function Contact() {
                 <Label htmlFor="message" className="text-[#155B5F]">Message</Label>
                 <Textarea
                   id="message"
+                  name="message" required maxLength={5000}
                   placeholder="Write your message here..."
                   rows={5}
                   className="bg-[#F7FAFA] focus:ring-[#155B5F]"
                 />
               </div>
 
-              <Button type="submit" className="w-full bg-[#155B5F] hover:bg-[#0F4A4D] text-white">
-                Send Message
+              <Button type="submit" disabled={sending} className="w-full bg-[#155B5F] hover:bg-[#0F4A4D] text-white">
+                {sending ? 'Sending...' : 'Send Message'}
               </Button>
             </form>
           </CardContent>

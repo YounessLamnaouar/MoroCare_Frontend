@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = import.meta.env.VITE_API_URL || 'https://morocarebackend-production.up.railway.app';
+const API_URL = (import.meta.env.VITE_API_URL || '').replace(/\/api\/?$/, '').replace(/\/$/, '');
 
 const api = axios.create({
   baseURL: API_URL,
@@ -58,7 +58,6 @@ export const login = async (credentials) => {
 export const register = async (userData) => {
   try {
     const response = await api.post('/api/register', userData);
-    console.log(response)
     if (response.data.token) {
       localStorage.setItem('token', response.data.token);
       localStorage.setItem('user', JSON.stringify(response.data.user));
@@ -70,7 +69,8 @@ export const register = async (userData) => {
   }
 };
 
-export const logout = () => {
+export const logout = async () => {
+  await api.post('/api/logout');
   localStorage.removeItem('token');
   localStorage.removeItem('user');
   window.location.href = '/login';
@@ -78,10 +78,6 @@ export const logout = () => {
 
 export const getUser = async () => {
   try {
-    const cachedUser = localStorage.getItem('user');
-    if (cachedUser) {
-      return JSON.parse(cachedUser);
-    }
     const response = await api.get('/api/user');
     if (response.data) {
       localStorage.setItem('user', JSON.stringify(response.data));
@@ -164,7 +160,7 @@ export const getUserTeleconsultations = async () => {
 
 export const createTeleconsultation = async (teleconsultationData) => {
   try {
-    const response = await api.post('/teleconsultations', teleconsultationData);
+    const response = await api.post('/api/teleconsultations', teleconsultationData);
     return response.data;
   } catch (error) {
     console.error('Error creating teleconsultation:', error);

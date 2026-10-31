@@ -50,7 +50,7 @@ export default function Directory() {
       const filtered = allDoctors.filter(doctor => 
         doctor.name?.toLowerCase().includes(query) ||
         doctor.speciality?.toLowerCase().includes(query) ||
-        doctor.location?.toLowerCase().includes(query)
+        doctor.address?.toLowerCase().includes(query)
       );
       
       setFilteredDoctors(filtered);

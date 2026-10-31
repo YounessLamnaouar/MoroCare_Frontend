@@ -1,13 +1,9 @@
-import React from 'react'
-import { BrowserRouter as Router } from 'react-router-dom'
-import AppRouter from './router/AppRouter'
-import { Toaster } from 'sonner'
-
+import { BrowserRouter } from 'react-router-dom';
+import { Toaster } from 'sonner';
+import AppRouter from './router/AppRouter';
+import { LocaleProvider } from './app/locale';
+import { AuthProvider } from './app/auth';
+import './app/styles.css';
 export default function App() {
-  return (
-    <Router>
-      <Toaster position="top-center" expand={true} richColors />
-      <AppRouter />
-    </Router>
-  )
+  return <LocaleProvider><AuthProvider><BrowserRouter><Toaster position="top-center" richColors /><AppRouter /></BrowserRouter></AuthProvider></LocaleProvider>;
 }

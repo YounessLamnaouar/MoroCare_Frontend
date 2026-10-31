@@ -22,10 +22,10 @@ import {
 const doctorSchema = z.object({
   name: z.string().min(3, "Name must be at least 3 characters."),
   email: z.string().email("Invalid email address."),
-  password: z.string().min(6, "Password must be at least 6 characters.").optional(),
+  password: z.string().min(8, "Password must be at least 8 characters.").optional().or(z.literal("")),
   speciality: z.string().min(1, "Please select a speciality."),
-  phone: z.string().min(10, "Phone number must be at least 10 digits.").optional(),
-  address: z.string().min(5, "Address must be at least 5 characters.").optional(),
+  phone: z.string().min(10, "Phone number must be at least 10 digits.").optional().or(z.literal("")),
+  address: z.string().min(5, "Address must be at least 5 characters.").optional().or(z.literal("")),
 });
 
 const SPECIALITIES = [
@@ -87,7 +87,8 @@ export default function DoctorsAdmin() {
   }, [fetchDoctors]);
 
   const onEdit = useCallback((doctor) => {
-    console.log('Editing doctor:', doctor);
+    reset();
+    setValue("password", "");
     setEditingDoctor(doctor);
     setValue("name", doctor.name);
     setValue("email", doctor.email);
@@ -95,10 +96,9 @@ export default function DoctorsAdmin() {
     setValue("phone", doctor.phone || "");
     setValue("address", doctor.address || "");
     setIsEditDialogOpen(true);
-  }, [setValue]);
+  }, [setValue, reset]);
 
   const handleUpdate = async (data) => {
-    console.log('Update form submitted:', data);
     if (isSubmitting) return;
 
     try {
@@ -109,10 +109,7 @@ export default function DoctorsAdmin() {
       if (!updateData.password) {
         delete updateData.password;
       }
-
-      console.log('Updating doctor:', { id: editingDoctor.id, data: updateData });
       const response = await updateDoctor(editingDoctor.id, updateData);
-      console.log('Update response:', response);
 
       setDoctors((prev) =>
         prev.map((doc) => (doc.id === editingDoctor.id ? response.data.doctor : doc))
@@ -132,16 +129,12 @@ export default function DoctorsAdmin() {
   };
 
   const handleCreate = async (data) => {
-    console.log('Create form submitted:', data);
     if (isSubmitting) return;
 
     try {
       setIsSubmitting(true);
       setError(null);
-
-      console.log('Creating doctor:', data);
       const response = await createDoctor(data);
-      console.log('Create response:', response);
 
       setDoctors((prev) => [...prev, response.data]);
       toast.success("Doctor added successfully!");

@@ -43,7 +43,12 @@ export default function DashboardAdmin() {
           name: day,
           appointments: appointments.filter(apt => {
             const aptDate = new Date(apt.date);
-            return aptDate.toLocaleDateString('en-US', { weekday: 'short' }) === day;
+            const start = new Date();
+            start.setHours(0, 0, 0, 0);
+            start.setDate(start.getDate() - start.getDay());
+            const end = new Date(start);
+            end.setDate(end.getDate() + 7);
+            return aptDate >= start && aptDate < end && aptDate.toLocaleDateString('en-US', { weekday: 'short' }) === day;
           }).length
         }));
         setChartData(weeklyData);

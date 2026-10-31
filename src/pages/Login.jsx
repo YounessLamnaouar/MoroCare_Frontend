@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { login } from "@/api";
 import background from '@/assets/contact.webp';
 
@@ -16,7 +16,7 @@ const formSchema = z.object({
 });
 
 export default function Login() {
-  const navigate = useNavigate();
+
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
@@ -37,8 +37,6 @@ export default function Login() {
       if (response.token) {
         localStorage.setItem("token", response.token);
         localStorage.setItem("user", JSON.stringify(response.user));
-        
-        console.log("User data stored:", JSON.parse(localStorage.getItem("user")));
         
         switch(response.user.role){
           case 'user':

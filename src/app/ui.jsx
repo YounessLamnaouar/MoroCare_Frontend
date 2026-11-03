@@ -1,4 +1,4 @@
-import { useLocale } from './locale';
+import { useLocale } from './locale-state';
 export function Page({
   title,
   subtitle,

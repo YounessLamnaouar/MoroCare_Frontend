@@ -1,9 +1,11 @@
+import { Person } from './avatar';
+import { notify } from './notifications';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { Video, VideoOff, Mic, MicOff, PhoneOff, Send } from 'lucide-react';
-import { api, errorText } from './client';
-import { useAuth } from './auth';
-import { useLocale } from './locale';
+import { api, errorText, streamChat } from './client';
+import { useAuth } from './auth-state';
+import { useLocale } from './locale-state';
 import { Page, Loading, ErrorNotice, Field } from './ui';
 import { Emergency } from './public-pages';
 export function VideoCall({
@@ -32,6 +34,9 @@ export function VideoCall({
     candidates = useRef([]),
     active = useRef(false),
     generation = useRef(0);
+  useEffect(() => {
+    if (status === 'Connected') notify('success', 'Video connected.');else if (status.includes('failed') || status.includes('unavailable')) notify('error', status);else if (status === 'The other participant left the call.') notify('info', status);
+  }, [status]);
   const base = `/teleconsultations/${session.id}`;
   const stop = useCallback(() => {
     active.current = false;
@@ -51,7 +56,10 @@ export function VideoCall({
   useEffect(() => {
     let live = true;
     const refresh = () => api.get(`${base}/video`).then(r => {
-      if (live) { setConfig(r.data); if (!r.data.enabled && active.current) stop(); }
+      if (live) {
+        setConfig(r.data);
+        if (!r.data.enabled && active.current) stop();
+      }
     }).catch(() => {
       if (live) setConfig({
         enabled: false
@@ -129,7 +137,10 @@ export function VideoCall({
         if (pc.connectionState === 'connected') setStatus('Connected');
         if (pc.connectionState === 'disconnected') {
           disconnectTimer.current = setTimeout(() => {
-            if (epoch === generation.current) { setStatus('Video connection failed. You can continue in chat.'); stop(); }
+            if (epoch === generation.current) {
+              setStatus('Video connection failed. You can continue in chat.');
+              stop();
+            }
           }, 15000);
         }
         if (pc.connectionState === 'failed') {
@@ -204,6 +215,7 @@ export function VideoCall({
   }
   async function leave() {
     stop();
+    notify('info', 'You left the video call.');
     await signal('leave');
   }
   return <section className="mc-card mc-video"><h2>{t('Video call')}</h2><p>{t('Camera and microphone stay off until you choose to join. Calls are not recorded by MoroCare.')}</p><div className={joined ? 'mc-video-grid' : 'mc-hidden'}><video ref={localVideo} autoPlay playsInline muted aria-label={t('You')} /><video ref={remoteVideo} autoPlay playsInline aria-label={t('Doctor')} /></div>{status && <p role="status" className="mc-notice">{t(status)}</p>}{!joined ? <><p className="mc-muted">{config && !config.enabled ? t(config.reason === 'outside_window' ? 'Video opens 15 minutes before the appointment and closes 2 hours after it.' : 'Video is not configured. Private chat remains available.') : t('Video opens 15 minutes before the appointment and closes 2 hours after it.')}</p><button className="mc-button" disabled={busy || !config?.enabled} onClick={join}><Video size={18} />{t(busy ? 'Loading...' : 'Join video')}</button></> : <div className="mc-actions"><button className="mc-button secondary" onClick={() => {
@@ -211,11 +223,13 @@ export function VideoCall({
           track.enabled = muted;
         });
         setMuted(!muted);
+        notify('info', muted ? 'Microphone enabled.' : 'Microphone muted.');
       }}>{muted ? <Mic size={18} /> : <MicOff size={18} />} {t(muted ? 'Unmute microphone' : 'Mute microphone')}</button><button className="mc-button secondary" onClick={() => {
         stream.current?.getVideoTracks().forEach(track => {
           track.enabled = cameraOff;
         });
         setCameraOff(!cameraOff);
+        notify('info', cameraOff ? 'Camera enabled.' : 'Camera disabled.');
       }}>{cameraOff ? <Video size={18} /> : <VideoOff size={18} />} {t(cameraOff ? 'Turn camera on' : 'Turn camera off')}</button><button className="mc-button danger" onClick={() => leave().catch(() => {})}><PhoneOff size={18} />{t('Leave video')}</button></div>}</section>;
 }
 export function ConsultationRoom() {
@@ -300,13 +314,16 @@ export function ConsultationRoom() {
   }
   if (failed) return <Page title={t('Consultation unavailable.')}><ErrorNotice message={t('You do not have access to this action.')} /></Page>;
   if (!session) return error ? <Page title={t('Private consultation')}><ErrorNotice message={error} /></Page> : <Loading />;
-  return <Page title={t('Private consultation')} subtitle={user.role === 'doctor' ? session.patient?.name : session.doctor?.name}><div className="mc-consultation-grid"><section className="mc-card mc-chat"><h2>{t('Private messages')}</h2><p>{t('Only you and your doctor can read this conversation.')}</p>{error && <ErrorNotice message={error} />}<div className="mc-chat-history" role="log" aria-live="polite">{!messages.length && <p className="mc-muted">{t('No messages yet.')}</p>}{messages.map(m => <article className={`mc-bubble ${m.sender_id === user.id ? 'own' : ''}`} key={m.id}><strong>{m.sender_id === user.id ? t('You') : user.role === 'doctor' ? session.patient?.name : session.doctor?.name}</strong><p>{m.body}</p><time dateTime={m.created_at}>{new Intl.DateTimeFormat(language, {
+  return <Page title={t('Private consultation')} subtitle={<Person user={user.role === 'doctor' ? session.patient : session.doctor} />}><div className="mc-consultation-grid"><section className="mc-card mc-chat"><h2>{t('Private messages')}</h2><p>{t('Only you and your doctor can read this conversation.')}</p>{error && <ErrorNotice message={error} />}<div className="mc-chat-history" role="log" aria-live="polite">{!messages.length && <p className="mc-muted">{t('No messages yet.')}</p>}{messages.map(m => <article className={`mc-bubble ${m.sender_id === user.id ? 'own' : ''}`} key={m.id}><strong><Person user={m.sender_id === user.id ? user : user.role === 'doctor' ? session.patient : session.doctor} name={m.sender_id === user.id ? t('You') : undefined} /></strong><p>{m.body}</p><time dateTime={m.created_at}>{new Intl.DateTimeFormat(language, {
                 dateStyle: 'short',
                 timeStyle: 'short'
               }).format(new Date(m.created_at))}</time></article>)}<div ref={bottom} /></div>{session.status === 'Confirmed' ? <form className="mc-chat-compose" onSubmit={send}><textarea aria-label={t('Write a message')} placeholder={t('Write a message')} value={body} onChange={e => {
             setBody(e.target.value);
             clientId.current = null;
           }} rows={3} maxLength={4000} required disabled={busy} /><button className="mc-button" disabled={busy || !body.trim()}><Send size={18} />{t('Send')}</button></form> : <p>{t('This consultation is complete. Messages are read-only.')}</p>}</section>{session.status === 'Confirmed' && <VideoCall session={session} />}</div></Page>;
+}
+function displayAnswer(text) {
+  return text.replace(/\[[^\]]*\]\(https?:\/\/[^)]*\)/g, '').replace(/https?:\/\/[^\s)]+/g, '');
 }
 export function Assistant() {
   const {
@@ -318,34 +335,62 @@ export function Assistant() {
     [messages, setMessages] = useState([]),
     [busy, setBusy] = useState(false),
     [error, setError] = useState('');
+  const pending = useRef(null);
+  useEffect(() => () => pending.current?.abort(), []);
   async function ask(e) {
     e.preventDefault();
+    if (!accepted || !question.trim() || busy) return;
     setBusy(true);
     setError('');
-    if (!accepted || !question.trim()) { setBusy(false); return; }
     const text = question;
+    const id = crypto.randomUUID();
+    const controller = new AbortController();
+    pending.current = controller;
+    const history = messages.filter(m => !m.incomplete).slice(-6).flatMap(m => [{
+      role: 'user',
+      content: m.question
+    }, {
+      role: 'assistant',
+      content: m.answer
+    }]);
+    setMessages(old => [...old, {
+      id,
+      question: text,
+      answer: '',
+      incomplete: true
+    }]);
+    setQuestion('');
     try {
-      const {
-        data
-      } = await api.post('/ask-ai', {
+      const data = await streamChat({
         question: text,
-        history: messages.slice(-6).flatMap(m=>[{role:'user',content:m.question},{role:'assistant',content:m.answer}]),
+        history,
         language,
         consent: true
-      }, {
-        timeout: 185000
-      });
-      setMessages(old => [...old, {
-        question: text,
+      }, answer => setMessages(old => old.map(m => m.id === id ? {
+        ...m,
+        answer
+      } : m)), controller.signal);
+      setMessages(old => old.map(m => m.id === id ? {
+        ...m,
         answer: data.reply,
-        doctors: data.doctors || []
-      }]);
-      setQuestion('');
+        doctors: data.doctors || [],
+        incomplete: false
+      } : m));
+      notify('success', 'Assistant reply received.');
     } catch (e) {
-      setError(e.response?.data?.code === 'assistant_offline' ? t('Start Ollama and download the model to use the assistant.') : errorText(e, t));
+      if (e.name !== 'AbortError') {
+        notify('error', null, e);
+        setError(e.response?.data?.code === 'assistant_offline' ? t('Start Ollama and download the model to use the assistant.') : errorText(e, t));
+      }
     } finally {
+      pending.current = null;
       setBusy(false);
     }
   }
-  return <Page title={t('Health information assistant')} subtitle={t('Health information, not a diagnosis.')}><Emergency /><div className="mc-card mc-form mc-narrow"><p>{t('This chat runs locally on this computer. Avoid sharing identifying details. AI can make mistakes.')}</p><label className="mc-checkbox"><input type="checkbox" checked={accepted} onChange={e => setAccepted(e.target.checked)} />{t('I understand this assistant provides information, not a diagnosis.')}</label><div className="mc-actions"><Link className="mc-button secondary" to="/services/directory">{t('Find a doctor')}</Link><button type="button" className="mc-button secondary" disabled={busy} onClick={()=>{setMessages([]);setQuestion('');setError('');}}>{t('New conversation')}</button></div>{messages.map((m, i) => <div key={i} className="mc-answer"><strong>{m.question}</strong><p className="mc-message-body">{m.answer}</p>{m.doctors?.length > 0 && <details><summary>{t("Find a doctor")}</summary><div className="mc-actions">{m.doctors.map(d=><Link key={d.id} className="mc-button secondary" to={`/services/appointment?doctor=${d.id}`}>{d.name} · {d.speciality}</Link>)}</div></details>}</div>)}{error && <ErrorNotice message={error} />}<form className="mc-form" onSubmit={ask}><Field label={t('Ask a general health question')}><textarea value={question} onChange={e => setQuestion(e.target.value)} maxLength={2000} required rows={4} /></Field><button className="mc-button" disabled={!accepted || busy || !question.trim()}>{t(busy ? 'Thinking...' : 'Ask')}</button></form></div></Page>;
+  return <Page title={t('Health information assistant')} subtitle={t('Health information, not a diagnosis.')}><Emergency /><div className="mc-card mc-form mc-narrow"><p>{t('This chat runs locally on this computer. Avoid sharing identifying details. AI can make mistakes.')}</p><label className="mc-checkbox"><input type="checkbox" checked={accepted} onChange={e => setAccepted(e.target.checked)} />{t('I understand this assistant provides information, not a diagnosis.')}</label><div className="mc-actions"><Link className="mc-button secondary" to="/services/directory">{t('Find a doctor')}</Link><button type="button" className="mc-button secondary" disabled={busy} onClick={() => {
+          setMessages([]);
+          setQuestion('');
+          setError('');
+          notify('info', 'New conversation started.');
+        }}>{t('New conversation')}</button></div>{messages.map((m, i) => <div key={i} className="mc-answer"><strong>{m.question}</strong><p className="mc-message-body" aria-live="polite">{displayAnswer(m.answer) || t('Thinking...')}</p>{m.doctors?.length > 0 && <details><summary>{t("Find a doctor")}</summary><div className="mc-actions">{m.doctors.map(d => <Link key={d.id} className="mc-button secondary" to={`/services/appointment?doctor=${d.id}`}><Person user={d} /> · {t(d.speciality)}</Link>)}</div></details>}</div>)}{error && <ErrorNotice message={error} />}<form className="mc-form" onSubmit={ask}><Field label={t('Ask a general health question')}><textarea value={question} onChange={e => setQuestion(e.target.value)} maxLength={2000} required rows={4} /></Field><button className="mc-button" disabled={!accepted || busy || !question.trim()}>{t(busy ? 'Thinking...' : 'Ask')}</button></form></div></Page>;
 }

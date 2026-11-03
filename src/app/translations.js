@@ -1,5 +1,137 @@
 // Human-authored interface translations. Patient messages and names are never translated.
-const rows = `This chat runs locally on this computer. Avoid sharing identifying details. AI can make mistakes.|Cette conversation fonctionne localement sur cet ordinateur. Évitez les données identifiantes. L’IA peut se tromper.|تعمل هذه المحادثة محلياً على هذا الحاسوب. تجنب معلومات الهوية. قد يخطئ الذكاء الاصطناعي.
+const rows = `Product stock changed. Refresh and reopen the product before saving.|Le stock a changé. Actualisez et rouvrez le produit avant de l’enregistrer.|تغير المخزون. حدّث القائمة وأعد فتح المنتج قبل حفظه.
+1 product|1 produit|منتج واحد
+1 order|1 commande|طلب واحد
+Cart refreshed.|Panier actualisé.|تم تحديث السلة.
+All|Tous|الكل
+From|Du|من
+To|Au|إلى
+Created date|Date de création|تاريخ الإنشاء
+Scheduled date|Date prévue|التاريخ المحدد
+Apply filters|Appliquer les filtres|تطبيق الفلاتر
+Reset|Réinitialiser|إعادة التعيين
+Filters applied.|Filtres appliqués.|تم تطبيق الفلاتر.
+Filters reset.|Filtres réinitialisés.|تمت إعادة تعيين الفلاتر.
+No results match your filters.|Aucun résultat ne correspond aux filtres.|لا توجد نتائج تطابق الفلاتر.
+Stock|Stock|المخزون
+Sort by|Trier par|ترتيب حسب
+Price: low to high|Prix croissant|السعر: من الأقل إلى الأعلى
+Price: high to low|Prix décroissant|السعر: من الأعلى إلى الأقل
+Newest first|Plus récents|الأحدث أولاً
+Low stock|Stock faible|مخزون منخفض
+In stock|En stock|متوفر
+{count} products|{count} produits|{count} منتجات
+{count} orders|{count} commandes|{count} طلبات
+Product image|Image du produit|صورة المنتج
+JPG, PNG or WebP. Maximum 2 MB.|JPG, PNG ou WebP. Maximum 2 Mo.|JPG أو PNG أو WebP. الحد الأقصى 2 ميغابايت.
+Remove current image|Retirer l’image actuelle|حذف الصورة الحالية
+Payment|Paiement|الدفع
+Search orders, customers or cities|Référence, client ou ville|ابحث بالمرجع أو العميل أو المدينة
+View order details|Voir les détails|عرض تفاصيل الطلب
+Copy order reference|Copier la référence|نسخ مرجع الطلب
+Order reference copied.|Référence copiée.|تم نسخ مرجع الطلب.
+Could not copy the order reference.|Impossible de copier la référence.|تعذر نسخ مرجع الطلب.
+Refresh|Actualiser|تحديث
+List refreshed.|Liste actualisée.|تم تحديث القائمة.
+Signed in successfully.|Connexion réussie.|تم تسجيل الدخول بنجاح.
+Account created successfully.|Compte créé avec succès.|تم إنشاء الحساب بنجاح.
+Signed out successfully.|Déconnexion réussie.|تم تسجيل الخروج بنجاح.
+Message sent.|Message envoyé.|تم إرسال الرسالة.
+Product saved.|Produit enregistré.|تم حفظ المنتج.
+Order placed successfully.|Commande enregistrée.|تم تقديم الطلب بنجاح.
+Order updated.|Commande mise à jour.|تم تحديث الطلب.
+Booking updated.|Réservation mise à jour.|تم تحديث الحجز.
+Changes saved.|Modifications enregistrées.|تم حفظ التغييرات.
+Your session expired. Please sign in again.|Session expirée. Veuillez vous reconnecter.|انتهت الجلسة. يرجى تسجيل الدخول مجدداً.
+Use a valid JPG, PNG or WebP image up to 2 MB.|Utilisez une image JPG, PNG ou WebP valide de 2 Mo maximum.|استخدم صورة JPG أو PNG أو WebP صالحة بحجم لا يتجاوز 2 ميغابايت.
+Cart updated.|Panier mis à jour.|تم تحديث السلة.
+Item removed from cart.|Article retiré du panier.|تم حذف المنتج من السلة.
+Temporary password generated.|Mot de passe temporaire généré.|تم إنشاء كلمة مرور مؤقتة.
+Doctor deactivated.|Médecin désactivé.|تم إيقاف حساب الطبيب.
+Video connected.|Appel vidéo connecté.|تم الاتصال بالفيديو.
+You left the video call.|Vous avez quitté l’appel vidéo.|لقد غادرت مكالمة الفيديو.
+Microphone enabled.|Microphone activé.|تم تفعيل الميكروفون.
+Microphone muted.|Microphone désactivé.|تم كتم الميكروفون.
+Camera enabled.|Caméra activée.|تم تشغيل الكاميرا.
+Camera disabled.|Caméra désactivée.|تم إيقاف الكاميرا.
+Assistant reply received.|Réponse de l’assistant reçue.|تم استلام رد المساعد.
+New conversation started.|Nouvelle conversation démarrée.|تم بدء محادثة جديدة.
+Demo adhesive bandages|Pansements adhésifs de démonstration|ضمادات لاصقة تجريبية
+Demo digital thermometer|Thermomètre numérique de démonstration|ميزان حرارة رقمي تجريبي
+Demo face masks (box)|Masques de démonstration (boîte)|علبة كمامات تجريبية
+Demo prescription item|Produit sur ordonnance de démonstration|منتج تجريبي يتطلب وصفة
+Demonstration product for local checkout testing. No real sale or delivery.|Produit de démonstration pour tester les commandes locales. Aucune vente ni livraison réelle.|منتج تجريبي لاختبار الطلبات محلياً. لا بيع أو توصيل حقيقي.
+First aid|Premiers secours|الإسعافات الأولية
+Health devices|Appareils de santé|أجهزة صحية
+Personal care|Soins personnels|العناية الشخصية
+Prescription|Sur ordonnance|بوصفة طبية
+Health shop|Boutique santé|متجر الصحة
+Browse products by name or SKU.|Recherchez un produit par nom ou référence.|ابحث عن المنتجات بالاسم أو المرجع.
+Browse demo products and follow your cash-on-delivery orders.|Parcourez les produits de démonstration et suivez vos commandes payables à la livraison.|تصفح المنتجات التجريبية وتابع طلبات الدفع عند التسليم.
+Demo shop — no real payment or delivery. Prescription products cannot be purchased online here.|Boutique de démonstration : aucun paiement ni livraison réels. Les produits sur ordonnance ne sont pas vendus ici.|متجر تجريبي دون دفع أو توصيل حقيقي. لا يمكن شراء المنتجات التي تتطلب وصفة هنا.
+My orders|Mes commandes|طلباتي
+Cart|Panier|السلة
+Maximum available quantity reached.|Quantité maximale disponible atteinte.|تم بلوغ الكمية القصوى المتاحة.
+Added to cart.|Ajouté au panier.|تمت الإضافة إلى السلة.
+No products found.|Aucun produit trouvé.|لا توجد منتجات.
+Demo product|Produit de démonstration|منتج تجريبي
+Available stock|Stock disponible|المخزون المتاح
+Prescription review required. Contact a pharmacy.|Vérification d’ordonnance requise. Contactez une pharmacie.|يلزم فحص الوصفة. تواصل مع صيدلية.
+Add to cart|Ajouter au panier|أضف إلى السلة
+Out of stock|Rupture de stock|نفد المخزون
+A cart item is unavailable. Adjust quantities or remove it.|Un article est indisponible. Ajustez les quantités ou retirez-le.|أحد المنتجات غير متاح. عدّل الكمية أو احذفه.
+Stock or prices may have changed. Refresh your cart and check the delivery details.|Le stock ou les prix ont pu changer. Actualisez le panier et vérifiez la livraison.|قد تكون الأسعار أو المخزون تغيرت. حدّث السلة وراجع بيانات التوصيل.
+Continue shopping|Continuer les achats|متابعة التسوق
+Your cart is empty.|Votre panier est vide.|سلتك فارغة.
+Your items|Vos articles|منتجاتك
+Refresh cart|Actualiser le panier|تحديث السلة
+Product|Produit|المنتج
+Quantity|Quantité|الكمية
+Remove|Retirer|حذف
+Subtotal|Sous-total|المجموع الفرعي
+Delivery fee|Frais de livraison|رسوم التوصيل
+Total|Total|المجموع
+Delivery details|Coordonnées de livraison|بيانات التوصيل
+Recipient|Destinataire|المستلم
+City|Ville|المدينة
+Delivery address|Adresse de livraison|عنوان التوصيل
+Cash on delivery. No card details are collected.|Paiement à la livraison. Aucune donnée bancaire n’est collectée.|الدفع عند التسليم. لا تُجمع بيانات البطاقة البنكية.
+By placing this demo order, you submit these delivery details to the shop administrator.|En passant cette commande de démonstration, vous transmettez ces coordonnées au gestionnaire de la boutique.|عند تقديم هذا الطلب التجريبي، تُرسل بيانات التوصيل إلى مسؤول المتجر.
+Place demo order|Passer la commande de démonstration|تأكيد الطلب التجريبي
+Cancel this order?|Annuler cette commande ?|هل تريد إلغاء الطلب؟
+This order changed. Refresh and try again.|Cette commande a changé. Actualisez et réessayez.|تم تغيير هذا الطلب. حدّث الصفحة وحاول مجدداً.
+Orders|Commandes|الطلبات
+No orders yet.|Aucune commande pour le moment.|لا توجد طلبات بعد.
+Order|Commande|الطلب
+Unpaid|Non payé|غير مدفوع
+Paid|Payé|مدفوع
+Cash on delivery|Paiement à la livraison|الدفع عند التسليم
+Order history|Historique de commande|سجل الطلب
+Mark shipped|Marquer comme expédiée|تحديد الطلب كمشحون
+Mark delivered and paid|Marquer comme livrée et payée|تحديد الطلب كمسلّم ومدفوع
+Shipped|Expédiée|تم الشحن
+Delivered|Livrée|تم التسليم
+Products|Produits|المنتجات
+Add product|Ajouter un produit|إضافة منتج
+Edit product|Modifier le produit|تعديل المنتج
+Category|Catégorie|الفئة
+Price (MAD)|Prix (MAD)|الثمن بالدرهم
+Description|Description|الوصف
+Requires prescription (not orderable)|Sur ordonnance (non commandable)|يتطلب وصفة (غير قابل للطلب)
+Appointments and consultations|Rendez-vous et consultations|المواعيد والاستشارات
+Monthly counts by scheduled date, including canceled bookings.|Totaux mensuels par date prévue, annulations incluses.|أعداد شهرية حسب التاريخ المحدد، بما فيها الحجوزات الملغاة.
+Period|Période|الفترة
+Last 6 months|6 derniers mois|آخر 6 أشهر
+Last 12 months|12 derniers mois|آخر 12 شهراً
+View chart data|Voir les données du graphique|عرض بيانات الرسم
+Month|Mois|الشهر
+Select a specialty|Choisir une spécialité|اختر التخصص
+Cardiology|Cardiologie|أمراض القلب
+Neurology|Neurologie|طب الأعصاب
+Dermatology|Dermatologie|الأمراض الجلدية
+Pediatrics|Pédiatrie|طب الأطفال
+General|Médecine générale|الطب العام
+This chat runs locally on this computer. Avoid sharing identifying details. AI can make mistakes.|Cette conversation fonctionne localement sur cet ordinateur. Évitez les données identifiantes. L’IA peut se tromper.|تعمل هذه المحادثة محلياً على هذا الحاسوب. تجنب معلومات الهوية. قد يخطئ الذكاء الاصطناعي.
 I understand this assistant provides information, not a diagnosis.|Je comprends que cet assistant informe sans poser de diagnostic.|أفهم أن هذا المساعد يقدم معلومات وليس تشخيصاً.
 New conversation|Nouvelle conversation|محادثة جديدة
 Start Ollama and download the model to use the assistant.|Démarrez Ollama et téléchargez le modèle pour utiliser l’assistant.|شغّل Ollama ونزّل النموذج لاستخدام المساعد.

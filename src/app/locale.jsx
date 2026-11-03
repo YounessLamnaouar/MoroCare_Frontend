@@ -1,6 +1,6 @@
-import { createContext, useContext, useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { translations } from './translations';
-const LocaleContext = createContext(null);
+import { LocaleContext } from './locale-state';
 export function LocaleProvider({
   children
 }) {
@@ -26,7 +26,4 @@ export function LocaleProvider({
     t,
     date
   }}>{children}</LocaleContext.Provider>;
-}
-export function useLocale() {
-  return useContext(LocaleContext);
 }

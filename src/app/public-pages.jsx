@@ -1,21 +1,22 @@
+import { notify } from './notifications';
 import { PhotoInput } from './avatar';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { CalendarDays, MessageCircle, ShieldCheck, MapPin, Heart, ArrowRight, Sparkles } from 'lucide-react';
-import { toast } from 'sonner';
 import logo from '@/assets/logo-MoroCare-removebg-preview.png';
 import appointmentImage from '@/assets/services/appointement.png';
 import consultationImage from '@/assets/services/teleconsulation.png';
 import directoryImage from '@/assets/services/directory.png';
 import profileImage from '@/assets/services/patienProfile.png';
+import medicationImage from '@/assets/services/medication.png';
 import assistantImage from '@/assets/services/AiAssistant.png';
-const serviceImages = [appointmentImage, consultationImage, directoryImage, profileImage, assistantImage];
+const serviceImages = [appointmentImage, consultationImage, directoryImage, profileImage, assistantImage, medicationImage];
 import background from '@/assets/landing2.png';
-import { useLocale } from './locale';
-import { useAuth, homeFor } from './auth';
+import { useLocale } from './locale-state';
+import { useAuth, homeFor } from './auth-state';
 import { api, errorText } from './client';
 import { Page, Field, formValues, ErrorNotice } from './ui';
-const serviceList = [['Book an appointment', 'Choose a doctor and request a time that works for you.', '/services/appointment', CalendarDays], ['Private consultation', 'Exchange messages with your doctor. Video is optional and requires your permission.', '/services/teleconsultation', MessageCircle], ['Directory', 'Browse by name, specialty, or city.', '/services/directory', MapPin], ['Your profile and bookings', 'Keep your contact details and follow your appointment requests.', '/services/profile', Heart], ['Health information assistant', 'General information to help you prepare for a consultation, never a diagnosis.', '/services/morocareAssistant', Sparkles]];
+const serviceList = [['Book an appointment', 'Choose a doctor and request a time that works for you.', '/services/appointment', CalendarDays], ['Private consultation', 'Exchange messages with your doctor. Video is optional and requires your permission.', '/services/teleconsultation', MessageCircle], ['Directory', 'Browse by name, specialty, or city.', '/services/directory', MapPin], ['Your profile and bookings', 'Keep your contact details and follow your appointment requests.', '/services/profile', Heart], ['Health information assistant', 'General information to help you prepare for a consultation, never a diagnosis.', '/services/morocareAssistant', Sparkles], ['Health shop', 'Browse demo products and follow your cash-on-delivery orders.', '/shop', Heart]];
 export function Home() {
   const {
     t
@@ -88,6 +89,7 @@ export function AuthPage({
     const data = formValues(e);
     if (register && data.password !== data.password_confirmation) {
       setError(t('Passwords do not match.'));
+      notify('error','Passwords do not match.');
       return;
     }
     setBusy(true);
@@ -123,6 +125,7 @@ export function PasswordPage() {
     const data = formValues(e);
     if (data.password !== data.password_confirmation) {
       setError(t('Passwords do not match.'));
+      notify('error','Passwords do not match.');
       return;
     }
     setBusy(true);
@@ -133,7 +136,7 @@ export function PasswordPage() {
         data: updated
       } = await api.get('/user');
       setUser(updated);
-      toast.success(t('Password changed.'));
+
       navigate(homeFor(updated), {
         replace: true
       });
